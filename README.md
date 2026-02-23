@@ -10,6 +10,8 @@
 
 отредактируйте файл led_config.be добавив туда PCA9685 и сопоставив выводы PCA9685 c именами виртуальных led в Matter
 
+отредактируйте файл mcp_config.be добавив туда MCP23017 и настроив выводы в качестве кнопок или реле
+
 перезагрузите устройство
 
 ### Использование из консоли/в Rule
@@ -22,4 +24,6 @@ br led_bri("Led01", 128)
 br all_on()
 br all_off()
 br led_status()
+br relay_set(name, true/false)
+br relay_toggle(name)
 ```
