@@ -7,7 +7,8 @@ def handle_devices()
 
     tasmota.add_rule("mtrreceived#" + n + "#power",
       def(value)
-        persist.power_values[n] = int(value)
+        if _restoring return end
+        persist_set_power(n, int(value))
         persist.save()
         if value == 1
           pwm_on(n, chip, ch, tp)
@@ -21,9 +22,10 @@ def handle_devices()
 
     tasmota.add_rule("mtrreceived#" + n + "#bri",
       def(brightness)
+        if _restoring return end
         var pwm_value = bri_to_pwm(brightness)
-        persist.pwm_values[n] = pwm_value
-        persist.bri_values[n] = int(brightness)
+        persist_set_pwm(n, pwm_value)
+        persist_set_bri(n, int(brightness))
         persist.save()
         var pca = get_pca(chip)
         if tp == "dimmer"
@@ -46,13 +48,14 @@ def handle_devices()
     if tp == "rgb"
       tasmota.add_rule("mtrreceived#" + n + "#rgb",
         def(rgb_str)
+          if _restoring return end
           var r = int("0x" + rgb_str[0..1])
           var g = int("0x" + rgb_str[2..3])
           var b = int("0x" + rgb_str[4..5])
           var r_pwm = int(r * 4096 / 255)
           var g_pwm = int(g * 4096 / 255)
           var b_pwm = int(b * 4096 / 255)
-          persist.rgb_values[n] = {"r": r_pwm, "g": g_pwm, "b": b_pwm}
+          persist_set_rgb(n, {"r": r_pwm, "g": g_pwm, "b": b_pwm})
           persist.save()
           var pca = get_pca(chip)
           var scale = persist.bri_values[n] / 254.0
@@ -67,7 +70,8 @@ def handle_devices()
     if tp == "ct"
       tasmota.add_rule("mtrreceived#" + n + "#ct",
         def(ct)
-          persist.ct_values[n] = int(ct)
+          if _restoring return end
+          persist_set_ct(n, int(ct))
           persist.save()
           var pca = get_pca(chip)
           var wc = ct_to_warm_cold(int(ct), persist.pwm_values[n])
