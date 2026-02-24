@@ -1,4 +1,5 @@
 def restore_state()
+  print("=== restore_state start ===")
   for dev: devices
     var n = dev["name"]
     var tp = dev["tp"]
@@ -21,4 +22,9 @@ def restore_state()
     tasmota.cmd("MtrUpdate " + cmd)
     print("Restore " + n + ": " + cmd)
   end
+
+  tasmota.set_timer(3000, def()
+    _restoring = false
+    print("=== restore done, handlers active ===")
+  end)
 end
