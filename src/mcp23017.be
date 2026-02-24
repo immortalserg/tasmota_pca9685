@@ -2,33 +2,26 @@
 class MCP23017
   var addr
   var wire
-  # Регистры
-  static IODIRA   = 0x00
-  static IODIRB   = 0x01
-  static IPOLA    = 0x02
-  static IPOLB    = 0x03
-  static GPPUA    = 0x0C
-  static GPPUB    = 0x0D
-  static GPIOA    = 0x12
-  static GPIOB    = 0x13
-  static OLATA    = 0x14
-  static OLATB    = 0x15
+  static IODIRA = 0x00
+  static IODIRB = 0x01
+  static GPPUA  = 0x0C
+  static GPPUB  = 0x0D
+  static GPIOA  = 0x12
+  static GPIOB  = 0x13
+  static OLATA  = 0x14
+  static OLATB  = 0x15
 
   def init(addr)
     self.addr = addr
     self.wire = wire1
-    # Все пины - входы по умолчанию
     self.wire.write(self.addr, self.IODIRA, 0xFF, 1)
     self.wire.write(self.addr, self.IODIRB, 0xFF, 1)
-    # Pullup выключен по умолчанию
-    self.wire.write(self.addr, self.GPPUA, 0x00, 1)
-    self.wire.write(self.addr, self.GPPUB, 0x00, 1)
-    # Выходные защёлки в 0
-    self.wire.write(self.addr, self.OLATA, 0x00, 1)
-    self.wire.write(self.addr, self.OLATB, 0x00, 1)
+    self.wire.write(self.addr, self.GPPUA,  0x00, 1)
+    self.wire.write(self.addr, self.GPPUB,  0x00, 1)
+    self.wire.write(self.addr, self.OLATA,  0x00, 1)
+    self.wire.write(self.addr, self.OLATB,  0x00, 1)
   end
 
-  # port: "A" или "B", pin: 0-7
   def pin_input(port, pin, pullup)
     var reg_dir = port == "A" ? self.IODIRA : self.IODIRB
     var reg_pu  = port == "A" ? self.GPPUA  : self.GPPUB
