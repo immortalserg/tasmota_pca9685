@@ -1,7 +1,7 @@
 def led_on(name)
   for dev: devices
     if dev["name"] == name
-      persist.power_values[name] = 1
+      persist_set_power(name, 1)
       persist.save()
       pwm_on(name, dev["chip"], dev["channels"], dev["tp"])
       tasmota.cmd('MtrUpdate {"Name":"' + name + '","Power":1,"Bri":' + str(persist.bri_values[name]) + '}')
@@ -15,7 +15,7 @@ end
 def led_off(name)
   for dev: devices
     if dev["name"] == name
-      persist.power_values[name] = 0
+      persist_set_power(name, 0)
       persist.save()
       pwm_off(dev["chip"], dev["channels"], dev["tp"])
       tasmota.cmd('MtrUpdate {"Name":"' + name + '","Power":0,"Bri":' + str(persist.bri_values[name]) + '}')
@@ -38,8 +38,8 @@ def led_bri(name, bri)
   for dev: devices
     if dev["name"] == name
       var pwm_value = bri_to_pwm(bri)
-      persist.pwm_values[name] = pwm_value
-      persist.bri_values[name] = bri
+      persist_set_pwm(name, pwm_value)
+      persist_set_bri(name, bri)
       persist.save()
       var pca = get_pca(dev["chip"])
       var tp = dev["tp"]
@@ -66,15 +66,11 @@ def led_bri(name, bri)
 end
 
 def all_on()
-  for dev: devices
-    led_on(dev["name"])
-  end
+  for dev: devices led_on(dev["name"]) end
 end
 
 def all_off()
-  for dev: devices
-    led_off(dev["name"])
-  end
+  for dev: devices led_off(dev["name"]) end
 end
 
 def led_status()
