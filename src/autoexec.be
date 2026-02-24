@@ -7,6 +7,7 @@ buttons = []
 mcp_chips = {}
 pca_chips = {}
 devices = []
+_restoring = true
 
 load("/pca9685.be")
 load("/mcp23017.be")
