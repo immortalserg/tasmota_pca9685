@@ -8,9 +8,28 @@
 
 включите через консоль SetOption83 1 чтобы обращаться к ендпоинтам Matter по имени
 
-отредактируйте файл led_config.be добавив туда PCA9685 и сопоставив выводы PCA9685 c именами виртуальных led в Matter
+отредактируйте файл _config.be добавив туда PCA9685 и сопоставив выводы PCA9685 c именами виртуальных led в Matter
+```
+  {"name": "Led05", "tp": "dimmer", "chip": "pca1", "channels": 4},
+  {"name": "Led06", "tp": "rgb",    "chip": "pca1", "channels": {"r": 5, "g": 6, "b": 7}},
+  {"name": "Led07", "tp": "ct",     "chip": "pca1", "channels": {"warm": 8, "cold": 9}},
+```
 
-отредактируйте файл mcp_config.be добавив туда MCP23017 и настроив выводы в качестве кнопок или реле
+
+настройте выводы MCP23017 в качестве реле
+```
+  {"name": "Rel01", "chip": "mcp3", "pin": "GPA0", "inverted": false},
+```
+
+или кнопок:
+```
+  {"chip": "mcp1", "pin": "GPB0", "short": "toggle", "long": "dim", "target": "Led01"},
+  {"chip": "mcp1", "pin": "GPB1", "short": "toggle", "long": "dim", "targets": ["Led02", "Led03", "Led04"]},
+```
+
+target: имя из devices[] или relays[]
+
+targets: управление несколькими устройствами 
 
 перезагрузите устройство
 
@@ -27,6 +46,14 @@ br led_status()
 br relay_set(name, true/false)
 br relay_toggle(name)
 ```
+
+### Натройка Matter
+
+
+
+### Настройка соответствия кнопок - выходу PCA9685
+
+Отредактируйте файл _config.be
 
 ### Ошибки
 
