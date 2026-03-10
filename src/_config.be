@@ -38,7 +38,7 @@ devices = [
 # ======= КОНФИГ КНОПОК =======
 buttons = [
   {"chip": "mcp1", "pin": "GPB0", "short": "toggle", "long": "dim", "target": "Led01"},
-  {"chip": "mcp1", "pin": "GPB1", "short": "toggle", "long": "dim", "target": "Led02"},
+  {"chip": "mcp1", "pin": "GPB1", "short": "toggle", "long": "dim", "targets": ["Led02", "Led03", "Led04"]},
   {"chip": "mcp1", "pin": "GPB2", "short": "toggle", "long": "dim", "target": "Led03"},
   {"chip": "mcp1", "pin": "GPB3", "short": "toggle", "long": "dim", "target": "Led04"},
   {"chip": "mcp1", "pin": "GPB4", "short": "toggle", "long": "dim", "target": "Led05"},
