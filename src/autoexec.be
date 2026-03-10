@@ -11,8 +11,7 @@ _restoring = true
 
 load("/pca9685.be")
 load("/mcp23017.be")
-load("/led_config.be")
-load("/mcp_config.be")
+load("/_config.be")
 load("/led_persist.be")
 load("/led_control.be")
 load("/relay_control.be")
