@@ -1,6 +1,7 @@
 def restore_state()
   print("=== restore_state start ===")
   for dev: devices
+    if dev["tp"] == "group" continue end  # пропустить группы
     var n = dev["name"]
     var tp = dev["tp"]
     var ch = dev["channels"]
