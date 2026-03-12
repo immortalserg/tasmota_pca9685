@@ -26,6 +26,9 @@ devices = [
   {"name": "Led14", "tp": "dimmer", "chip": "pca1", "channels": 13},
   {"name": "Led15", "tp": "dimmer", "chip": "pca1", "channels": 14},
   {"name": "Led16", "tp": "dimmer", "chip": "pca1", "channels": 15},
+  {"name": "Group1", "tp": "group", "chip": nil, "channels": nil},
+  {"name": "Group2", "tp": "group", "chip": nil, "channels": nil},
+  {"name": "Group3", "tp": "group", "chip": nil, "channels": nil},
 ]
 
 
@@ -54,3 +57,10 @@ buttons = [
   {"chip": "mcp1", "pin": "GPA6", "short": "toggle", "long": "dim", "target": "Led15"},
   {"chip": "mcp1", "pin": "GPA7", "short": "toggle", "long": "dim", "target": "Led16"},
 ]
+
+
+mtr_groups = {
+  "Group1": ["Led01", "Led02", "Led03", "Led04"],
+  "Group2": ["Led05", "Led06", "Led07", "Led08"],
+  "Group3": ["Led09","Led10","Led11","Led12"],
+}
