@@ -13,6 +13,8 @@
   {"name": "Led05", "tp": "dimmer", "chip": "pca1", "channels": 4},
   {"name": "Led06", "tp": "rgb",    "chip": "pca1", "channels": {"r": 5, "g": 6, "b": 7}},
   {"name": "Led07", "tp": "ct",     "chip": "pca1", "channels": {"warm": 8, "cold": 9}},
+  {"name": "Group1", "tp": "group", "chip": nil, "channels": nil},
+  {"name": "Group2", "tp": "group", "chip": nil, "channels": nil},
 ```
 настройте выводы MCP23017 в качестве реле
 ```
@@ -22,10 +24,21 @@
 ```
   {"chip": "mcp1", "pin": "GPB0", "short": "toggle", "long": "dim", "target": "Led01"},
   {"chip": "mcp1", "pin": "GPB1", "short": "toggle", "long": "dim", "targets": ["Led02", "Led03", "Led04"]},
+  # Кнопка управляет всей группой
+  {"chip": "mcp1", "pin": "GPB0", "short": "toggle", "long": "dim", "target": "Group1"},
+  # Или несколько групп сразу
+  {"chip": "mcp1", "pin": "GPB1", "short": "toggle", "long": "dim", "targets": ["Group1", "Group2"]},
 ```
 target: имя из devices[] или relays[]
 
 targets: управление несколькими устройствами 
+
+добавьте группы
+```
+  "Group1": ["Led01", "Led02", "Led03", "Led04"],
+  "Group2": ["Led05", "Led06", "Led07", "Led08"],
+  "Group3": ["Led09","Led10","Led11","Led12"],
+```
 
 перезагрузите устройство
 
