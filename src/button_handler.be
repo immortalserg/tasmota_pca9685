@@ -3,14 +3,27 @@ var DIM_STEP     = 5
 var DIM_INTERVAL = 50
 var LONG_PRESS   = 600
 
-# Получить список целей кнопки (поддержка "target" и "targets")
+# Получить список целей кнопки с разворачиванием групп
 def btn_get_targets(btn)
+  var raw = []
   if btn.contains("targets")
-    return btn["targets"]
+    raw = btn["targets"]
   elif btn.contains("target")
-    return [btn["target"]]
+    raw = [btn["target"]]
   end
-  return []
+
+  # Развернуть группы в список LED
+  var result = []
+  for t: raw
+    if mtr_groups.contains(t)
+      for led: mtr_groups[t]
+        result.push(led)
+      end
+    else
+      result.push(t)
+    end
+  end
+  return result
 end
 
 def btn_name(btn)
@@ -19,7 +32,7 @@ end
 
 def btn_is_led(name)
   for dev: devices
-    if dev["name"] == name return true end
+    if dev["name"] == name && dev["tp"] != "group" return true end
   end
   return false
 end
@@ -36,7 +49,7 @@ def btn_init()
   end
 end
 
-# Короткое нажатие — toggle всех целей кнопки
+# Короткое нажатие — toggle всех целей (группы разворачиваются)
 def do_short_action(btn)
   var targets = btn_get_targets(btn)
   if btn["short"] == "toggle"
@@ -50,14 +63,12 @@ def do_short_action(btn)
   end
 end
 
-# Один шаг диммирования — применяется ко всем целям
+# Один шаг диммирования
 def do_dim_step(btn_nm, btn)
   var st = btn_state[btn_nm]
   if !st["long_active"] return end
 
   var targets = btn_get_targets(btn)
-
-  # Берём яркость первой цели как ориентир
   var first = targets[0]
   var cur_bri = persist.bri_values[first]
   var next_bri = cur_bri + st["dim_dir"] * DIM_STEP
@@ -70,7 +81,6 @@ def do_dim_step(btn_nm, btn)
     st["dim_dir"] = 1
   end
 
-  # Применить ко всем целям
   for target: targets
     led_bri(target, next_bri)
   end
@@ -89,18 +99,15 @@ def btn_poll()
     var val = mcp.pin_read(pp[0], pp[1])
     var targets = btn_get_targets(btn)
 
-    # Нажатие (фронт 1→0)
     if val == 0 && st["last_val"] == 1
       st["pressed_time"] = tasmota.millis()
       st["long_active"] = false
     end
 
-    # Удержание
     if val == 0 && st["last_val"] == 0
       var held = tasmota.millis() - st["pressed_time"]
       if held >= LONG_PRESS && !st["long_active"] && btn["long"] == "dim"
         st["long_active"] = true
-        # Если первая цель выключена — включаем все
         if persist.power_values[targets[0]] == 0
           for target: targets
             led_on(target)
@@ -110,7 +117,6 @@ def btn_poll()
       end
     end
 
-    # Отпускание (фронт 0→1)
     if val == 1 && st["last_val"] == 0
       var held = tasmota.millis() - st["pressed_time"]
       if st["long_active"]
