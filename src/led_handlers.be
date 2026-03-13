@@ -1,38 +1,44 @@
 def handle_devices()
   for dev: devices
-    var n = dev["name"]
-    var tp = dev["tp"]
-    var ch = dev["channels"]
+    var n    = dev["name"]
+    var tp   = dev["tp"]
+    var ch   = dev["channels"]
     var chip = dev["chip"]
 
-    tasmota.add_rule("mtrreceived#" + n + "#power",
+    # Группы обрабатываются в matter_group.be
+    if tp == "group" continue end
+
+    tasmota.add_rule("MtrReceived#" + n + "#Power",
       def(value)
         if _restoring return end
-        persist_set_power(n, int(value))
+        var pwr = int(value)
+        persist_set_power(n, pwr)
         persist.save()
-        if value == 1
+        if pwr == 1
           pwm_on(n, chip, ch, tp)
           print(n + " Power ON")
         else
           pwm_off(chip, ch, tp)
           print(n + " Power OFF")
         end
+        tasmota.cmd('MtrUpdate {"Name":"' + n + '","Power":' + str(pwr) + ',"Bri":' + str(persist.bri_values[n]) + '}')
       end
     )
 
-    tasmota.add_rule("mtrreceived#" + n + "#bri",
+    tasmota.add_rule("MtrReceived#" + n + "#Bri",
       def(brightness)
         if _restoring return end
-        var pwm_value = bri_to_pwm(brightness)
+        var bri = int(brightness)
+        var pwm_value = bri_to_pwm(bri)
         persist_set_pwm(n, pwm_value)
-        persist_set_bri(n, int(brightness))
+        persist_set_bri(n, bri)
         persist.save()
         var pca = get_pca(chip)
         if tp == "dimmer"
           pca.set_pwm(ch, pwm_value)
         elif tp == "rgb"
           var rgb = persist.rgb_values[n]
-          var scale = brightness / 254.0
+          var scale = bri / 254.0
           pca.set_pwm(ch["r"], int(rgb["r"] * scale))
           pca.set_pwm(ch["g"], int(rgb["g"] * scale))
           pca.set_pwm(ch["b"], int(rgb["b"] * scale))
@@ -41,12 +47,13 @@ def handle_devices()
           pca.set_pwm(ch["warm"], wc[0])
           pca.set_pwm(ch["cold"], wc[1])
         end
-        print(n + " Bri: " + str(pwm_value))
+        print(n + " Bri: " + str(bri))
+        tasmota.cmd('MtrUpdate {"Name":"' + n + '","Power":1,"Bri":' + str(bri) + '}')
       end
     )
 
     if tp == "rgb"
-      tasmota.add_rule("mtrreceived#" + n + "#rgb",
+      tasmota.add_rule("MtrReceived#" + n + "#RGB",
         def(rgb_str)
           if _restoring return end
           var r = int("0x" + rgb_str[0..1])
@@ -68,7 +75,7 @@ def handle_devices()
     end
 
     if tp == "ct"
-      tasmota.add_rule("mtrreceived#" + n + "#ct",
+      tasmota.add_rule("MtrReceived#" + n + "#CT",
         def(ct)
           if _restoring return end
           persist_set_ct(n, int(ct))
@@ -77,7 +84,7 @@ def handle_devices()
           var wc = ct_to_warm_cold(int(ct), persist.pwm_values[n])
           pca.set_pwm(ch["warm"], wc[0])
           pca.set_pwm(ch["cold"], wc[1])
-          print(n + " CT: " + str(ct) + " warm:" + str(wc[0]) + " cold:" + str(wc[1]))
+          print(n + " CT: " + str(ct))
         end
       )
     end
