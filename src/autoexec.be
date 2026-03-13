@@ -1,5 +1,6 @@
 import matter
 import persist
+tasmota.cmd("SetOption83 1")
 
 # Объявляем глобальные переменные заранее
 relays = []
