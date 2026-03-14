@@ -23,7 +23,7 @@
 или кнопок:
 ```
   {"chip": "mcp1", "pin": "GPB0", "short": "toggle", "long": "dim", "target": "Led01"},
-  {"chip": "mcp1", "pin": "GPB1", "short": "toggle", "long": "dim", "targets": ["Led02", "Led03", "Led04"]},
+  {"chip": "mcp1", "pin": "GPB1", "short": "toggle", "double": {"bri": 254},"long": "dim", "targets": ["Led02", "Led03", "Led04"]},
   # Кнопка управляет всей группой
   {"chip": "mcp1", "pin": "GPB0", "short": "toggle", "long": "dim", "target": "Group1"},
   # Или несколько групп сразу
@@ -33,6 +33,30 @@ target: имя из devices[] или relays[]
 
 targets: управление несколькими устройствами 
 
+Возможные варианты в настройке кнопок:
+```
+{"bri": 254}      # просто установить яркость
+{"b_onoff": 254}  # выключено → включить с яркостью, включено → выключить
+```
+кнопка управляет одним target/targets
+```
+  {"chip": "mcp1", "pin": "GPB0", "short": "toggle", "double": {"bri": 10}, "long": "dim", "target": "Led01"},
+```
+кнопка управляет разными target для разных событий
+```
+  {"chip": "mcp1", "pin": "GPB1",
+   "short":  {"action": "toggle", "target": "Led02"},
+   "double": {"action": {"bri": 254}, "targets": ["Led02", "Led03", "Led04"]},
+   "long":   {"action": "dim", "targets": "Led03"}},
+```
+или комбинировать, отдельный target выделен только на двойной клик
+```
+  {"chip": "mcp1", "pin": "GPB2",
+   "short":  "toggle",
+   "double": {"action": {"bri": 128}, "targets": ["Led03", "Led04"]},
+   "long":   "dim",
+   "target": "Led03"},
+```
 добавьте группы
 ```
   "Group1": ["Led01", "Led02", "Led03", "Led04"],
