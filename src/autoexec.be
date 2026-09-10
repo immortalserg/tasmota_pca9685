@@ -5,6 +5,7 @@ tasmota.cmd("SetOption83 1")
 # Объявляем глобальные переменные заранее
 relays = []
 buttons = []
+zb_buttons = []
 mcp_chips = {}
 pca_chips = {}
 devices = []
