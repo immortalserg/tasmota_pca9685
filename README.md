@@ -78,6 +78,29 @@ br led_status()
 br relay_set(name, true/false)
 br relay_toggle(name)
 ```
+
+### Zigbee выключатели:
+добавьте в файл _config.be ассоциации zigbee выключателей с Led
+
+Простой вариант (один target на все события):
+```
+{"device": "0xFF74", "endpoint": 1, "short": "toggle", "double": {"bri": 10}, "long": "dim", "target": "Led01"},
+```
+Разные targets на разные события:
+```
+{"device": "0xFF74", "endpoint": 2,
+ "short":  {"action": "toggle", "target": "Led02"},
+ "double": {"action": {"bri": 254}, "targets": ["Led02", "Led03", "Led04"]},
+ "long":   {"action": "dim", "targets": ["Led03"]}},
+```
+Комбинированный (общий target + отдельный на double):
+```
+{"device": "0xFF74", "endpoint": 3,
+ "short":  "toggle",
+ "double": {"action": {"bri": 128}, "targets": ["Led03", "Led04"]},
+ "long":   "dim",
+ "target": "Led03"},
+```
 ### Ошибки
 
 Если определяется датчик INA219 которого у Вас нет возможно не будет работать PCA9685 так как адрес занят несуществующим устройством, надо отключить драйвера ошибочно определенных устрйоств, в консоли выполните:
