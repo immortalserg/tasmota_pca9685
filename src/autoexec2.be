@@ -1,6 +1,8 @@
 init_persist()
 relay_init()
 btn_init()
+zb_init()
+zb_init_rules()
 tasmota.set_timer(0, handle_devices)
 tasmota.set_timer(5000, restore_state)
 tasmota.set_timer(100, btn_poll)
