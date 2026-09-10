@@ -57,7 +57,17 @@ buttons = [
   {"chip": "mcp1", "pin": "GPA6", "short": "toggle", "long": "dim", "target": "Led15"},
   {"chip": "mcp1", "pin": "GPA7", "short": "toggle", "long": "dim", "target": "Led16"},
 ]
-
+# ======= КОНФИГ ZIGBEE ВЫКЛЮЧАТЕЛЕЙ =======
+# "device"   — короткий сетевой адрес устройства (как в ZbReceived, напр. "0xFF74")
+# "endpoint" — номер клавиши на выключателе (1,2,3...); если не указан — считается 1
+# Проверить адрес/эндпоинт: в консоли выполнить ZbStatus2, или посмотреть в логе ZbReceived
+# short/double/long/target(s) — тот же синтаксис, что и в buttons[]
+zb_buttons = [
+  {"device": "0xFF74", "endpoint": 1, "short": "toggle", "long": "dim", "target": "Led01"},
+  {"device": "0xFF74", "endpoint": 2, "short": "toggle", "long": "dim", "target": "Led02"},
+  {"device": "0xFF74", "endpoint": 3, "short": "toggle", "target": "Group1"},
+  # {"device": "0xAB12", "endpoint": 1, "short": "toggle", "double": "toggle", "target": "Group1"},
+]
 
 mtr_groups = {
   "Group1": ["Led01", "Led02", "Led03", "Led04"],
